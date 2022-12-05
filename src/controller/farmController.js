@@ -44,7 +44,11 @@ async function registerFirm(req, res) {
         if(!crop.seasons.trim()){
             return res.status(400).send({status : false , msg : "please provide season"})
         }
-        let ncrop = await cropModel.create({cropName : crop.cropName.trim() , seasons : crop.seasons.trim(),  cycle : crop.cycle.trim()})
+        let ncrop;
+        ncrop = await cropModel.findOne({cropName : crop.cropName.trim() , seasons : crop.seasons.trim(),  cycle : crop.cycle.trim()})
+        if(!ncrop){
+        ncrop = await cropModel.create({cropName : crop.cropName.trim() , seasons : crop.seasons.trim(),  cycle : crop.cycle.trim()})
+        }
         let latregx = /^[\+-]?(([1-8]?\d)\D+([1-5]?\d|60)\D+([1-5]?\d|60)(\.\d+)?|90\D+0\D+0)\D+[NSns]?$/
         let longregx = /^[\+-]?([1-7]?\d{1,2}\D+([1-5]?\d|60)\D+([1-5]?\d|60)(\.\d+)?|180\D+0\D+0)\D+[EWew]?$/
         if(!field){
@@ -90,7 +94,14 @@ async function getFirmWithCrop(req , res){
     let crop = req.params.cropId
     let fields = await fieldModel.find({cropId : crop}).select({_id : 1})
     let farms = await farmModel.find({"region.subregion.fieldId" : {$in : fields}})
-    return res.status(200).send({status : true , msg : farms})
+    let message;
+    if(farms.length == 0){
+        message = "no firm present with this crop"
+    }
+    else{
+        message = farms
+    }
+    return res.status(200).send({status : true , msg : message})
 }
 
 module.exports = {registerFirm , getFirmWithCrop}

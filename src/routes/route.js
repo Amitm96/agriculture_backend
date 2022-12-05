@@ -9,7 +9,7 @@ route.post("/organization/register" , registerOrganization)
 route.post("/organization/login" , login)
 route.get("/organization/organizationlist" , listOrganization)
 route.post("/organization/createfirm" ,auth , registerFirm)
-route.post("/crop/updatecrop/:cropId" ,auth, updateCropCycleSeasons)
+route.put("/crop/updatecrop/:cropId" ,auth, updateCropCycleSeasons)
 route.get("/farm/getfarm/:cropId" ,auth , getFirmWithCrop)
 
 module.exports = route
